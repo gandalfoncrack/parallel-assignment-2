@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int main() {
+    int M, N, K;
+    printf("Enter the dimensions of matrix A (M x N): ");
+    scanf("%d %d", &M, &N);
+    printf("Enter the dimensions of matrix B (N x K): ");
+    scanf("%d %d", &N, &K);
+    
+    int matrix_A[M][N];
+    int matrix_B[N][K];
+    int result_matrix[M][K];
+    
+    srand(time(NULL));  
+    for (int i = 0; i < M; i++) {
+        for (int j = 0; j < N; j++) {
+            matrix_A[i][j] = rand() % 10; 
+        }
+    }
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < K; j++) {
+            matrix_B[i][j] = rand() % 10;  
+    }
+    
+    clock_t start_time = clock(); 
+    for (int i = 0; i < M; i++) {
+        for (int j = 0; j < K; j++) {
+            for (int k = 0; k < N; k++) {
+                result_matrix[i][j] += matrix_A[i][k] * matrix_B[k][j];
+            }
+        }
+    }
+    clock_t end_time = clock();
+    
+    double runtime = (double)(end_time - start_time) / CLOCKS_PER_SEC;
+    printf("Matrix multiplication took %f seconds\n", runtime);
+    
+    // Print the matrices and the result matrix optional since the matrices are getting very big
+    /*printf("Matrix A:\n");
+    for (int i = 0; i < M; i++) {
+        for (int j = 0; j < N; j++) {
+            printf("%d ", matrix_A[i][j]);
+        }
+        printf("\n");
+    }
+    printf("Matrix B:\n");
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < K; j++) {
+            printf("%d ", matrix_B[i][j]);
+        }
+        printf("\n");
+    }
+    printf("Result matrix:\n");
+    for (int i = 0; i < M; i++) {
+        for (int j = 0; j < K; j++) {
+            printf("%d ", result_matrix[i][j]);
+        }
+        printf("\n");
+    }*/
+    return 0;
+}}

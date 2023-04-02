@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <time.h>
+#define MAX_THREADS 10000
+
+int M, N, K;
+int matrix_A[MAX_THREADS][MAX_THREADS];
+int matrix_B[MAX_THREADS][MAX_THREADS];
+int result_matrix[MAX_THREADS][MAX_THREADS];
+
+void* multiply(void* arg) {
+    int thread_id = *(int*)arg;
+    int start = (thread_id * M) / MAX_THREADS;
+    int end = ((thread_id + 1) * M) / MAX_THREADS;
+    
+    for (int i = start; i < end; i++) {
+        for (int j = 0; j < K; j++) {
+            for (int k = 0; k < N; k++) {
+                result_matrix[i][j] += matrix_A[i][k] * matrix_B[k][j];
+            }
+        }
+    }
+    
+    pthread_exit(NULL);
+}
+
+int main() {
+    printf("Enter the dimensions of matrix A (M x N): ");
+    scanf("%d %d", &M, &N);
+    printf("Enter the dimensions of matrix B (N x K): ");
+    scanf("%d %d", &N, &K);
+   
+    srand(time(NULL));
+    for (int i = 0; i < M; i++) {
+        for (int j = 0; j < N; j++) {
+            matrix_A[i][j] = rand() % 10;
+        }
+    }
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < K; j++) {
+            matrix_B[i][j] = rand() % 10;
+        }
+    }
+    
+    pthread_t threads[MAX_THREADS];
+    int thread_ids[MAX_THREADS];
+    clock_t start_time = clock();
+    for (int i = 0; i < MAX_THREADS; i++) {
+        thread_ids[i] = i;
+        pthread_create(&threads[i], NULL, multiply, &thread_ids[i]);
+    }
+    for (int i = 0; i < MAX_THREADS; i++) {
+        pthread_join(threads[i], NULL);
+    }
+    clock_t end_time = clock();
+    
+    double runtime = (double)(end_time - start_time) / CLOCKS_PER_SEC;
+    printf("Matrix multiplication took %f seconds\n", runtime);
+    
+    // Print the matrices and the result matrix optional since the matrices are getting very big
+    /*printf("Matrix A:\n");
+    for (int i = 0; i < M; i++) {
+        for (int j = 0; j < N; j++) {
+            printf("%d ", matrix_A[i][j]);
+        }
+        printf("\n");
+    }
+    printf("Matrix B:\n");
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < K; j++) {
+            printf("%d ", matrix_B[i][j]);
+        }
+        printf("\n");
+    }
+    printf("Result matrix:\n");
+    for (int i = 0; i < M; i++) {
+        for (int j = 0; j < K; j++) {
+            printf("%d ", result_matrix[i][j]);
+        }
+        printf("\n");
+    }*/
+    
+    return 0;
+}
